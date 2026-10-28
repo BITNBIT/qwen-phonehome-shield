@@ -10,7 +10,7 @@
 # The cloud-metadata IPs are NOT touched here (servers need them); see README for an optional rule.
 set -euo pipefail
 
-VERSION="1.0.0"
+VERSION="2.0.0"
 HOSTS_FILE="${HOSTS_FILE:-/etc/hosts}"
 START="# >>> qwen-phonehome-shield >>> (do not edit this block; remove it with: qwen-shield.sh disable)"
 END="# <<< qwen-phonehome-shield <<<"
