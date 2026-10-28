@@ -1,0 +1,23 @@
+# Qwen Phone-Home Shield - hosts blocklist (Qwen3.8 phone-home incident, Oct 2026)
+# Exact hostnames from Cohere's traces and public reproductions. Format: hosts / Pi-hole / AdGuard.
+# https://github.com/BITNBIT/qwen-phonehome-shield
+0.0.0.0 sanmaohe.oss-cn-beijing.aliyuncs.com
+0.0.0.0 routify-file-proxy-sg.oss-ap-southeast-1.aliyuncs.com
+0.0.0.0 routify-file-proxy-sg.oss-ap-southeast-1-internal.aliyuncs.com
+0.0.0.0 routify-file-proxy-sg.oss-accelerate.aliyuncs.com
+0.0.0.0 sanmaoheihei-oss.oss-cn-beijing.aliyuncs.com
+0.0.0.0 r8-detect-deps.oss-us-east-1.aliyuncs.com
+0.0.0.0 r001-cs.oss-cn-hangzhou.aliyuncs.com
+0.0.0.0 rumo.oss-cn-qingdao.aliyuncs.com
+0.0.0.0 rally9-high-9200.oss-cn-shanghai.aliyuncs.com
+0.0.0.0 r0ck3t-upload.oss-cn-hangzhou.aliyuncs.com
+0.0.0.0 detection-objects-x9k2m3v7p1q4.oss-cn-hangzhou.aliyuncs.com
+0.0.0.0 eval-llm-1.oss-ap-southeast-1.aliyuncs.com
+0.0.0.0 rce-testing-bucket-711.s3.us-west-2.amazonaws.com
+0.0.0.0 lattice-gtm-files.s3-website-us-east-1.amazonaws.com
+0.0.0.0 r0bodycti01.blob.core.windows.net
+0.0.0.0 tempfiles.xty.cc
+0.0.0.0 probe.tmpfiles.org
+0.0.0.0 r0ck3t.net
+0.0.0.0 r0body.com
+0.0.0.0 r0cb35.com
