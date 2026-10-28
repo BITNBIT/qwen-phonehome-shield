@@ -65,12 +65,58 @@ Il nome dei siti lo legge dalla memoria DNS del tuo PC. Le tue liste e il regist
 `sudo ./linux-macos/qwen-shield.sh enable | disable`, `./linux-macos/qwen-shield.sh scan`.
 **Router, Pi-hole, AdGuard:** usa [`blocklist/hosts.txt`](blocklist/hosts.txt).
 
-## Limiti, detti chiaramente
-- Sorveglia i **programmi AI** (motori e agenti che aggiungi), non tutto il PC: il browser e gli altri programmi restano liberi.
-- Un agente che usa il `python.exe` o il `node.exe` di sistema va aggiunto a mano: così sorvegli anche gli altri programmi
-  che li usano. Meglio dare all'agente una copia sua.
-- In modalità B il primo pacchetto può partire nella frazione di secondo prima del taglio.
-- Non è un antivirus: è un cancello tra la tua AI e internet.
+## ⚠️ Condizioni e avvertenze (leggi prima di usarlo)
+
+**Requisiti**
+- Windows 10 o 11, con **PowerShell 5.1** (c'è già in Windows). Niente da installare.
+- **Diritti di amministratore**: Attiva, Disattiva e Gestisci li chiedono. Serve per il file hosts, il firewall e l'avvio automatico.
+- Il guardiano parte **all'accesso dell'utente che l'ha attivato**. Gli altri account del PC non vedono la finestra:
+  in modalità A le loro AI restano bloccate verso i siti nuovi.
+
+**Firewall: modalità A o B (scelta automatica all'attivazione e a ogni avvio del guardiano)**
+- **A — firewall di Windows attivo:** protezione completa, niente esce finché non accetti.
+- **B — c'è un altro firewall** (Norton, Kaspersky, Bitdefender, ESET, McAfee, Avast…): questi programmi **spengono le
+  regole del firewall di Windows**, quindi il guardiano può solo **tagliare** la connessione appena la vede (ogni mezzo secondo)
+  e chiederti. I primi dati possono uscire in quella frazione di secondo.
+  - **IPv6:** una connessione IPv6 non si può tagliare dall'esterno. L'AI viene **messa in pausa** mentre decidi e,
+    se non accetti, **il programma AI viene chiuso** (perdi la chat o il lavoro in corso in quel programma).
+  - Per avere la modalità A con Norton: *Impostazioni → Firewall → Smart Firewall: Off* (l'antivirus resta acceso),
+    poi di nuovo **Enable-Shield.bat**. Se l'altro firewall si riaccende, al riavvio il guardiano passa da solo alla B.
+- Gli indirizzi "metadata" (`169.254.169.254`, `100.100.100.200`) **non vengono bloccati su macchine virtuali o cloud**,
+  che ne hanno bisogno: lì resta solo il blocco per nome.
+
+**Cosa cambia sul PC (e come torna com'era)** — tutto si annulla con **Disable-Shield.bat**
+| Cosa | Dove | Con Disattiva |
+|---|---|---|
+| Blocco degli host dell'incidente e dei siti "No, mai" | file `hosts` (blocchi segnati) + copia `hosts.qwenshield.bak` | file hosts identico byte per byte (la copia `.bak` resta) |
+| Regole "Qwen Phone-Home Shield" | firewall di Windows | eliminate |
+| Registro delle connessioni bloccate ("Connessione a Piattaforma filtro Windows", solo errori) | criteri di controllo di Windows, solo modalità A | rimesso com'era prima |
+| Avvio automatico del guardiano | Utilità di pianificazione | eliminato |
+| Le tue liste (`allowed.txt`, `blocked.txt`, `programs.txt`) e il registro (`log.txt`) | `C:\ProgramData\QwenShield` | **restano** per la prossima attivazione; cancella la cartella se non le vuoi |
+
+**Comportamento da sapere**
+- La prima volta, **ogni sito nuovo** di un programma sorvegliato fa comparire la finestra: download di modelli
+  (Hugging Face, Ollama), controlli aggiornamenti, ricerche web degli agenti. Rispondi **Accetta sempre** per quelli che usi.
+- Senza risposta in 2 minuti vale **No, non accetto**; lo stesso sito te lo richiede dopo 2 minuti.
+- **Accetta solo ora** vale 10 minuti.
+- Il nome del sito viene dalla memoria DNS del PC. Se il programma si collega a un indirizzo numerico senza nome, vedi solo l'IP.
+- Il nome del modello viene letto dal motore (`-m`/`--alias` di llama.cpp, Ollama, server compatibili OpenAI su questo PC).
+  Se non si riesce compare "non riconosciuto".
+- La prima attivazione cerca i programmi AI e i `.gguf` **su tutti i dischi**: 1-3 minuti. Solo lettura, niente esce dal PC.
+- Windows può mostrare **"Windows ha protetto il PC"** sui file scaricati: *Ulteriori informazioni → Esegui comunque*.
+  Gli script sono testo leggibile: aprili con il Blocco note prima di usarli.
+
+**Limiti**
+- Sorveglia i **programmi AI** elencati (motori trovati da solo + quelli che aggiungi), non tutto il PC: il browser e gli altri programmi restano liberi.
+- Un agente che usa il `python.exe` o il `node.exe` **di sistema**: se lo aggiungi, sorvegli anche tutti gli altri programmi
+  che usano lo stesso file. Meglio dare all'agente una copia sua (cartella portatile).
+- Solo connessioni TCP (web, API). Non sorveglia l'UDP.
+- La lista degli host noti copre gli indirizzi pubblicati finora; quelli nuovi li ferma la finestra, non la lista.
+- Linux e macOS: solo blocco degli host noti e controllo modelli (niente finestra, per ora).
+- Non è un antivirus e non sostituisce le buone pratiche: agli agenti dai solo gli strumenti che servono, niente chiavi cloud.
+
+**Responsabilità:** software gratuito "così com'è" (licenza MIT), senza garanzie. Non è affiliato ad Alibaba, Qwen, Cohere,
+Palisade, Norton o altri marchi citati. Le informazioni sull'incidente vengono dalle fonti qui sotto.
 
 ## Fonti
 - Cohere: [Concerning behaviour in a popular open-weight AI model](https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model)
@@ -114,6 +160,25 @@ tools can build its own way out. This tool puts **you** between your AI and the 
 `Enable-Shield.bat` (on) · `Disable-Shield.bat` (off, byte-for-byte restore) · `Manage-Guard.bat` (programs, lists, log) ·
 `Scan-only.bat` (find Qwen3.8 models). The interface follows your Windows language (Italian or English).
 Linux/macOS: known-host blocking and model scan (`linux-macos/qwen-shield.sh`). Routers / Pi-hole / AdGuard: `blocklist/hosts.txt`.
+
+**⚠️ Conditions and warnings**
+- Windows 10/11, PowerShell 5.1 (built in). **Administrator rights** are needed to enable, disable and manage.
+- The guard starts at logon of the user who enabled it; other accounts don't see the window (in mode A their AIs stay blocked toward new sites).
+- **Third-party firewall (Norton, Kaspersky, Bitdefender, ESET, McAfee, Avast…) = mode B.** Those products switch off the Windows Firewall rules,
+  so the guard can only cut a new connection as soon as it sees it (every 0.5 s): the first bytes may leave in that fraction of a second.
+  **IPv6** connections cannot be cut from outside: the AI is paused while you decide and, **if you don't accept, the AI program is closed**
+  (unsaved work in it is lost). For full protection turn off the third-party firewall (antivirus can stay on) and run Enable-Shield.bat again.
+- Cloud-metadata IPs are **not** blocked on virtual/cloud machines (they need them).
+- **What changes on the PC:** marked blocks in the `hosts` file (+ `hosts.qwenshield.bak`), firewall rules named "Qwen Phone-Home Shield",
+  the "Filtering Platform Connection" failure audit (mode A only), a scheduled task, and `C:\ProgramData\QwenShield` (your lists and log).
+  **Disable-Shield.bat** restores everything (hosts byte for byte, previous audit setting); your lists stay for next time.
+- Every **new** site of a guarded program asks once (model downloads, update checks, agent web searches): answer *Accept always* for the ones you use.
+  No answer in 2 minutes = *No, not accepted*; *Accept only now* lasts 10 minutes.
+- First enable scans all drives for AI programs and `.gguf` files (1–3 min, read-only).
+- Windows SmartScreen may say "Windows protected your PC": *More info → Run anyway*. The scripts are plain text: read them first.
+- **Limits:** guards the listed AI programs only (not the browser or the whole PC); adding the system-wide `python.exe`/`node.exe` guards every
+  program using it; TCP only; the known-host list covers published hosts, new ones are stopped by the window; Linux/macOS: host blocking + scan only.
+- Free software "as is" (MIT), no warranty. Not affiliated with Alibaba, Qwen, Cohere, Palisade, Norton or other brands mentioned.
 
 ---
 
